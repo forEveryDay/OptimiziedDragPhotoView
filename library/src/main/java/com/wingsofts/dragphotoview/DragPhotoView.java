@@ -96,6 +96,7 @@ public class DragPhotoView extends PhotoView {
                         //如果不消费事件，则不作操作
                         if (!isTouchEvent) {
                             mScale = 1;
+                            performAnimation();
                             return super.dispatchTouchEvent(event);
                         }
                     }
@@ -171,7 +172,7 @@ public class DragPhotoView extends PhotoView {
         if (mScale >= mMinScale && mScale <= 1f) {
             mScale = (float) (1 - percent * 0.1);
 
-            mAlpha = (int) (255 * (1 - percent));
+            mAlpha = (int) (255 * (1 - percent * 0.1));
             if (mAlpha > 255) {
                 mAlpha = 255;
             } else if (mAlpha < 0) {

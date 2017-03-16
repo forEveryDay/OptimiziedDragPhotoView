@@ -170,7 +170,7 @@ public class DragPhotoActivity extends AppCompatActivity {
 
         final DragPhotoView photoView = mPhotoViews[0];
 
-        ValueAnimator translateXAnimator = ValueAnimator.ofFloat(view.getX(), view.getX() + translateX);
+        ValueAnimator translateXAnimator = ValueAnimator.ofFloat(view.getX(), mOriginLeft);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -180,7 +180,7 @@ public class DragPhotoActivity extends AppCompatActivity {
         translateXAnimator.setDuration(DURATION);
         translateXAnimator.start();
 
-        ValueAnimator translateYAnimator = ValueAnimator.ofFloat(view.getY(), view.getY() + translateY);
+        ValueAnimator translateYAnimator = ValueAnimator.ofFloat(view.getY(), mOriginTop);
         translateYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -271,6 +271,7 @@ public class DragPhotoActivity extends AppCompatActivity {
     private void finishWithAnimation() {
 
         final DragPhotoView photoView = mPhotoViews[0];
+        Log.e("TAG", "mTranslationX:" + mTranslationX);
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(0, mTranslationX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -338,6 +339,7 @@ public class DragPhotoActivity extends AppCompatActivity {
 
     private void performEnterAnimation() {
         final DragPhotoView photoView = mPhotoViews[0];
+        Log.e("TAG", "photoView.getX():" + photoView.getX() + "");
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(photoView.getX(), 0);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
