@@ -31,7 +31,7 @@ public class DragPhotoView extends PhotoView {
     private int mHeight;
     private float mMinScale = 0.25f;
     private int mAlpha = 255;
-    private final static int MAX_TRANSLATE_Y = 100;
+    private final static int MAX_TRANSLATE_Y = 200;
 
     private final static long DURATION = 300;
     private boolean canFinish = false;
@@ -69,10 +69,10 @@ public class DragPhotoView extends PhotoView {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
+//        Log.e("TAG", "mWidth:" + w + "        mHeight:" + h);
         mWidth = w;
         mHeight = h;
 
-        Log.e("TAG", "mWidth:" + mWidth + "        mHeight:" + mHeight);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class DragPhotoView extends PhotoView {
         if (mScale >= mMinScale && mScale <= 1f) {
             mScale = (float) (1 - percent * 0.1);
 
-            mAlpha = (int) (255 * (1 - percent * 0.1));
+            mAlpha = (int) (255 * (1 - percent));
             if (mAlpha > 255) {
                 mAlpha = 255;
             } else if (mAlpha < 0) {
