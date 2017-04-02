@@ -35,7 +35,7 @@ public class DragPhotoActivity extends AppCompatActivity {
     private float mScaleY;
     private float mTranslationX;
     private float mTranslationY;
-    private int DURATION = 1000;
+    private int DURATION = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +110,8 @@ public class DragPhotoActivity extends AppCompatActivity {
                         mOriginCenterX = mOriginLeft + mOriginWidth / 2;
                         mOriginCenterY = mOriginTop + mOriginHeight / 2;
 
+                        Log.e("TAG", "mOriginLeft:" + mOriginLeft + "     mOriginTop:" + mOriginTop);
+
                         int[] location = new int[2];
 
                         final DragPhotoView photoView = mPhotoViews[0];
@@ -118,7 +120,7 @@ public class DragPhotoActivity extends AppCompatActivity {
                         mTargetHeight = (float) photoView.getHeight();
                         mTargetWidth = (float) photoView.getWidth();
 
-                        Log.e("TAG", "mTargetHeight:" + mTargetHeight + "      mTargetWidth:" + mTargetWidth);
+//                        Log.e("TAG", "mTargetHeight:" + mTargetHeight + "      mTargetWidth:" + mTargetWidth);
 
                         mScaleX = (float) mOriginWidth / mTargetWidth;
                         mScaleY = (float) mOriginHeight / mTargetHeight;
@@ -126,7 +128,7 @@ public class DragPhotoActivity extends AppCompatActivity {
                         float targetCenterX = location[0] + mTargetWidth / 2;
                         float targetCenterY = location[1] + mTargetHeight / 2;
 
-                        Log.e("TAG", "mOriginWidth:" + mOriginWidth + "     targetCenterX:" + targetCenterX);
+                        Log.e("TAG", "mOriginWidth:" + mOriginWidth + "     targetCenterX:" + targetCenterX + "mOriginHeight：" + mOriginHeight);
 
                         mTranslationX = mOriginCenterX - targetCenterX;
                         mTranslationY = mOriginCenterY - targetCenterY;
@@ -147,30 +149,37 @@ public class DragPhotoActivity extends AppCompatActivity {
 
     /**
      * ===================================================================================
-     * <p/>
+     * <p>
      * 底下是低版本"共享元素"实现   不需要过分关心  如有需要 可作为参考.
-     * <p/>
+     * <p>
      * Code  under is shared transitions in all android versions implementation
      */
     private void performExitAnimation(final DragPhotoView view, float mTranslateX, float mTranslateY, float w, float h, float scale) {
+        Log.e("TAG", "1_view.getX()" + view.getX() + "    1_view.getLeft:" + view.getLeft());
         view.finishAnimationCallBack();
         float viewX = mTargetWidth / 2 + mTranslateX - mTargetWidth * scale / 2;
         float viewY = mTargetHeight / 2 + mTranslateY - mTargetHeight * scale / 2;
         view.setX(viewX);
         view.setY(viewY);
 
-        float centerX = view.getX() + mTargetWidth * scale / 2;
-        float centerY = view.getY() + mTargetHeight * scale / 2;
+        float centerX = view.getX() + mTargetWidth / 2;
+        float centerY = view.getY() + mTargetHeight / 2;
 
-        Log.e("TAG", "centerX" + view.getX());
+        Log.e("TAG", "centerX:" + centerX + "   viewX:" + view.getX() + "  viewWidth:" + view.getWidth());
 
-        float translateX = mOriginCenterX - centerX;
-        float translateY = mOriginCenterY - centerY;
+        float translateX = mOriginCenterX + (mTargetWidth * mScaleX / scale - mOriginWidth) / 2 - centerX;
+        float translateY = mOriginCenterY + (mTargetHeight * mScaleY / scale - mOriginHeight) / 2 - centerY;
 
+//        Log.e("TAG", "translateX:" + translateX + "  translateY:" + translateY);
+
+//        float translateX = mOriginLeft - view.getX();
+//        float translateY = mOriginTop - view.getY();
+
+        Log.e("TAG", "view.getX():" + view.getX() + "    view.getLeft:" + view.getLeft());
 
         final DragPhotoView photoView = mPhotoViews[0];
 
-        ValueAnimator translateXAnimator = ValueAnimator.ofFloat(view.getX(), mOriginLeft);
+        ValueAnimator translateXAnimator = ValueAnimator.ofFloat(view.getX(), view.getX() + translateX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -180,7 +189,7 @@ public class DragPhotoActivity extends AppCompatActivity {
         translateXAnimator.setDuration(DURATION);
         translateXAnimator.start();
 
-        ValueAnimator translateYAnimator = ValueAnimator.ofFloat(view.getY(), mOriginTop);
+        ValueAnimator translateYAnimator = ValueAnimator.ofFloat(view.getY(), view.getY() + translateY);
         translateYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -196,6 +205,7 @@ public class DragPhotoActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animator animator) {
+                Log.e("TAG:", "view.getX():" + view.getX() + "  viewWidth:" + view.getWidth());
                 animator.removeAllListeners();
                 finish();
                 overridePendingTransition(0, 0);
@@ -215,7 +225,6 @@ public class DragPhotoActivity extends AppCompatActivity {
 
         translateYAnimator.setDuration(DURATION);
         translateYAnimator.start();
-
 
         ValueAnimator scaleYAnimator = ValueAnimator.ofFloat(1, mScaleY / scale);
         scaleYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -239,7 +248,6 @@ public class DragPhotoActivity extends AppCompatActivity {
         scaleXAnimator.start();
 
 
-//
 //        scaleXAnimator.addListener(new Animator.AnimatorListener() {
 //            @Override
 //            public void onAnimationStart(Animator animator) {
@@ -339,7 +347,7 @@ public class DragPhotoActivity extends AppCompatActivity {
 
     private void performEnterAnimation() {
         final DragPhotoView photoView = mPhotoViews[0];
-        Log.e("TAG", "photoView.getX():" + photoView.getX() + "");
+        Log.e("TAG", "photoView.getX():" + photoView.getX() + "    photoView.getY():" + photoView.getY());
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(photoView.getX(), 0);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
