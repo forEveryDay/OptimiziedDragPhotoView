@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DragPhotoActivity extends AppCompatActivity {
+    private static final String TAG = DragPhotoActivity.class.getSimpleName();
     private ViewPager mViewPager;
     private List<String> mList;
     private DragPhotoView[] mPhotoViews;
@@ -62,7 +63,7 @@ public class DragPhotoActivity extends AppCompatActivity {
             mPhotoViews[i].setOnTapListener(new DragPhotoView.OnTapListener() {
                 @Override
                 public void onTap(DragPhotoView view) {
-                    finishWithAnimation();
+                    finishWithAnimation(view);
                 }
             });
 
@@ -155,6 +156,9 @@ public class DragPhotoActivity extends AppCompatActivity {
      * Code  under is shared transitions in all android versions implementation
      */
     private void performExitAnimation(final DragPhotoView view, float mTranslateX, float mTranslateY, float w, float h, float scale) {
+        final float viewX1 = view.getX();
+        final float viewY1 = view.getY();
+
         Log.e("TAG", "1_view.getX()" + view.getX() + "    1_view.getLeft:" + view.getLeft());
         view.finishAnimationCallBack();
         float viewX = mTargetWidth / 2 + mTranslateX - mTargetWidth * scale / 2;
@@ -183,7 +187,7 @@ public class DragPhotoActivity extends AppCompatActivity {
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                view.setX((Float) valueAnimator.getAnimatedValue());
+                view.setX((Float) valueAnimator.getAnimatedValue() + viewX1);
             }
         });
         translateXAnimator.setDuration(DURATION);
@@ -193,7 +197,7 @@ public class DragPhotoActivity extends AppCompatActivity {
         translateYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                view.setY((Float) valueAnimator.getAnimatedValue());
+                view.setY((Float) valueAnimator.getAnimatedValue() + viewY1);
             }
         });
 
@@ -276,15 +280,18 @@ public class DragPhotoActivity extends AppCompatActivity {
 
     }
 
-    private void finishWithAnimation() {
+    private void finishWithAnimation(final DragPhotoView photoView) {
+        final float photoViewX = photoView.getX();
 
-        final DragPhotoView photoView = mPhotoViews[0];
+        Log.e(TAG, "onAnimationUpdate: " + photoViewX);
+//        final DragPhotoView photoView = mPhotoViews[0];
         Log.e("TAG", "mTranslationX:" + mTranslationX);
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(0, mTranslationX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                photoView.setX((Float) valueAnimator.getAnimatedValue());
+//                Log.e(TAG, "onAnimationUpdate: " + (Float) valueAnimator.getAnimatedValue());
+                photoView.setX((Float) valueAnimator.getAnimatedValue() + photoViewX);
             }
         });
         translateXAnimator.setDuration(DURATION);
@@ -391,6 +398,6 @@ public class DragPhotoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finishWithAnimation();
+//        finishWithAnimation();
     }
 }
